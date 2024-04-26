@@ -32,13 +32,14 @@ class Data:
     async def __on_message(self, raw_message):
         timestamp = time.time()
         message = json.loads(raw_message)
-        logging.debug(message)
+        if len(message)==4:
+            self.queue.put((self.instId, timestamp, message['data']))
 
     async def __keep_alive(self):
         while not self.closed:
             try:
                 await asyncio.sleep(5)
-                await self.ws.pong()
+                # await self.ws.pong()
             except asyncio.CancelledError:
                 return
             except:
@@ -47,8 +48,12 @@ class Data:
 
     async def close(self):
         self.closed = True
+        for task in asyncio.all_tasks():
+            task.cancel()
         await self.ws.close()
         await self.client.close()
+        session = aiohttp.ClientSession()
+        await session.close()
         await asyncio.sleep(1)
 
     async def connect(self):
