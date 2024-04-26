@@ -14,7 +14,7 @@ class Data:
             queue (_type_): _description_
             instType (string): used to specify the trade type, etc: USDT-FUTURES, SPOT 
             instId (string): the symbol, etc: ETHUSDT, BTCUSDT
-            channel (string): specify the market data to fetch, etc: trade-public trade, books5- market order
+            channel (string): specify the market data to fetch, etc: trade - public trade, books5- market order
             timeout (int, optional): _description_. Defaults to 7.
         """
         self.instType = instType
@@ -29,9 +29,10 @@ class Data:
         self.channel = channel
         self.instId = instId
 
-    # async def __on_message(self, raw_message):
-    #     timestamp = time.time()
-    #     message = json.loads(raw_message)
+    async def __on_message(self, raw_message):
+        timestamp = time.time()
+        message = json.loads(raw_message)
+        logging.debug(message)
 
     async def __keep_alive(self):
         while not self.closed:
@@ -88,3 +89,6 @@ class Data:
                 await self.keep_alive
             self.ws = None
             self.keep_alive = None
+
+
+

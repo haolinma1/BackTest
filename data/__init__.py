@@ -3,11 +3,17 @@ import logging
 import datetime
 import sys
 import asyncio
-import signal
+# import signal
+import logging
 import os
 from fetchdata import Data
 queue = Queue()
-stream = Data(queue, sys.argv[2].split(','))
+
+
+
+instType, instId, channel= sys.argv[1].split(',')
+
+stream = Data(queue=queue, instType=instType, instId=instId, channel=channel)
 
 
 def writer_proc(queue, output):
@@ -28,7 +34,7 @@ def shutdown():
 
 async def main():
     logging.basicConfig(level=logging.DEBUG)
-    writer_p = Process(target=writer_proc, args=(queue, sys.argv[3],))
+    writer_p = Process(target=writer_proc, args=(queue, sys.argv[2],))
     writer_p.start()
     while not stream.closed:
         await stream.connect()
@@ -38,6 +44,7 @@ async def main():
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    loop.add_signal_handler(signal.SIGTERM, shutdown)
-    loop.add_signal_handler(signal.SIGINT, shutdown)
+    # for Linux
+    # loop.add_signal_handler(signal.SIGTERM, shutdown)
+    # loop.add_signal_handler(signal.SIGINT, shutdown)
     loop.run_until_complete(main())
