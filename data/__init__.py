@@ -7,8 +7,11 @@ import signal
 import logging
 import os
 from fetchdata import Data
+import dotenv
 queue = Queue()
-
+dotenv.load_dotenv()
+# data_path is the path to store the data
+data_path = os.getenv("DATA_PATH")
 
 instType, instId, channel= sys.argv[1].split(',')
 
@@ -25,7 +28,7 @@ def writer_proc(queue, output):
         try:
             with open(os.path.join(output, '%s_%s_%s.dat' % (symbol, date,channel)), 'a') as f:
                 message = str(message)
-                f.write(str(timestamp))
+                f.write(str(int(timestamp*1000)))
                 f.write(' ')
                 f.write(message)
                 f.write('\n')
@@ -39,7 +42,7 @@ def shutdown():
 
 async def main():
     logging.basicConfig(level=logging.DEBUG)
-    writer_p = Process(target=writer_proc, args=(queue, sys.argv[2],))
+    writer_p = Process(target=writer_proc, args=(queue, data_path,))
     writer_p.start()
     try:
         while not stream.closed:
