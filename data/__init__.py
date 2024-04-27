@@ -23,8 +23,7 @@ def writer_proc(queue, output):
         symbol, timestamp, message = data
         date = datetime.datetime.fromtimestamp(timestamp).strftime('%Y%m%d')
         try:
-            with open(os.path.join(output, '%s_%s.dat' % (symbol, date)), 'a') as f:
-                print("File path:", os.path.abspath(os.path.join(output, '%s_%s.dat' % (symbol, date))))
+            with open(os.path.join(output, '%s_%s_%s.dat' % (symbol, date,channel)), 'a') as f:
                 message = str(message)
                 f.write(str(timestamp))
                 f.write(' ')
