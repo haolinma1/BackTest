@@ -50,7 +50,9 @@ def main():
                         asks_list_array = np.append(asks_list_array, asks_list)
                         bids_list_array = np.append(bids_list_array, bids_list)
                 np.savez(os.path.join(data_path, file_name.replace('.dat', '.npz')), asks_list_array=asks_list_array, bids_list_array=bids_list_array, timestamp_array=timestamp_array)
-                        
+            elif file_name.__contains__('trade'):
+                # if the file channel is trade
+                pass
 
 
 if __name__ == '__main__':

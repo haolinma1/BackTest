@@ -9,7 +9,6 @@ import aiohttp
 class Data:
     def __init__(self, queue, instType, instId, channel, timeout=7):
         """_summary_
-
         Args:
             queue (_type_): _description_
             instType (string): used to specify the trade type, etc: USDT-FUTURES, SPOT 
@@ -17,6 +16,7 @@ class Data:
             channel (string): specify the market data to fetch, etc: trade - public trade, books5- market order
             timeout (int, optional): _description_. Defaults to 7.
         """
+        
         self.instType = instType
         self.client = aiohttp.ClientSession(
             headers={'Content-Type': 'application/json'})

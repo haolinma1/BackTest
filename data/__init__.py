@@ -1,5 +1,4 @@
 from multiprocessing import Process, Queue
-import logging
 import datetime
 import sys
 import asyncio
