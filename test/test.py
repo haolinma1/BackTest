@@ -2,29 +2,40 @@
 import numpy as np
 import dotenv
 import os
+import numpy as np
+from numba import float64, int64, int8, boolean
+from numba.experimental import jitclass
+from numba.typed import Dict, List
+from numba.types import DictType, ListType, Tuple
 dotenv.load_dotenv()
 # data_path is the folder path to store the data
 
 
-class test:
+@jitclass
+class Test:
+    side:int64
+    def __init__(self):
+        self.side=1
+
+order_ty = Test.class_type.instance_type
+order_tup_ty = Tuple((order_ty, int64))
+@jitclass
+class Order:
+    orderlist:ListType(order_tup_ty)
     def __init__(self) -> None:
-        self.b=1
+        self.orderlist=List.empty_list(order_tup_ty)
+    
+    def getOrderList(self):
+        return self.orderlist
+    
+    def append(self,test_instance,value):
+        self.orderlist.append((test_instance, value))
+    def __getitem__(self,key):
+        if self.orderlist:
+            return self.orderlist[key]
+        else:
+            return None
 
-def convert_order_book(line):
-    timestamp, data_str = line.split(" ", 1)
-
-    timestamp = int(timestamp)
-    data_dict = eval(data_str)
-    data_dict = data_dict[0]
-    asks_list = data_dict['asks']
-    bids_list = data_dict['bids']
-    for sublist in asks_list:
-        for i in range(len(sublist)):
-            sublist[i] = float(sublist[i]) 
-    for sublist in bids_list:
-        for i in range(len(sublist)):
-            sublist[i] = float(sublist[i])
-    return [timestamp, asks_list, bids_list]
 
 def main():
     """
@@ -39,15 +50,16 @@ def main():
 "1714246667180 [{'asks': [['63263.5', '2.620'], ['63268.5', '0.003'], ['63268.7', '0.600'], ['63268.8', '4.055'], ['63268.9', '10.049']], 'bids': [['63263.3', '3.052'], ['63262.5', '0.553'], ['63262.4', '3.043'], ['63261.9', '3.038'], ['63261.6', '3.059']], 'checksum': 0, 'ts': '1714246666101'}]",
 "1714246667259 [{'asks': [['63263.4', '1.000'], ['63263.5', '2.620'], ['63268.7', '2.000'], ['63268.8', '3.981'], ['63268.9', '9.860']], 'bids': [['63263.3', '3.051'], ['63262.5', '0.553'], ['63262.4', '3.012'], ['63261.9', '3.041'], ['63261.6', '3.014']], 'checksum': 0, 'ts': '1714246666193'}]"
     ]
-    timestamp_array=np.array([])
-    asks_list_array=np.array([])
-    bids_list_array=np.array([])
-    for line in lines:
-        timestamp, asks_list, bids_list=convert_order_book(line)
-        timestamp_array=np.append(timestamp_array, timestamp)
-        asks_list_array = np.append(asks_list_array, asks_list)
-        bids_list_array = np.append(bids_list_array, bids_list)
 
+    test1 = Test()
+    test2 = Test()
+    order=Order()
+    order.append(test1,1)
+    order.append(test2,2)
+    
+    # orderlist=order.getOrderList()[1][0]
+    orderlist=order.__getitem__(0)[0].side
+    print(orderlist)
     
         
     # data1 = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
