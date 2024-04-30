@@ -1,6 +1,8 @@
 
 import os
 import numpy as np
+
+
 def validate(data_path):
     """
     This module is used to validate the data from npz file and clean up the data
@@ -20,7 +22,8 @@ def validate(data_path):
                     prev_local_timestamp = local_timestamp
                     continue
                 elif local_timestamp <= prev_local_timestamp:
-                    raise ValueError("Local timestamp not in order")
+                    raise ValueError(
+                        "File {} Local timestamp not in order".format(file_path))
                 prev_local_timestamp = local_timestamp
             # check if the exchange timestamp is in order
             prev_exchange_timestamp = None
@@ -29,12 +32,23 @@ def validate(data_path):
                     prev_exchange_timestamp = exchange_timestamp
                     continue
                 elif exchange_timestamp <= prev_exchange_timestamp:
-                    raise ValueError("Exchange timestamp not in order")
+                    raise ValueError(
+                        "File {} Exchange timestamp not in order".format(file_path))
                 prev_exchange_timestamp = exchange_timestamp
 
+            # check if the local timestamp is smaller than exchange timestamp
+            if len(data['local_timestamp']) != len(data['exchange_timestamp']):
+                raise ValueError(
+                    "File {} Local timestamp and exchange timestamp not equal in number".format(file_path))
 
+            for i in range(len(data['local_timestamp'])):
+                if data['local_timestamp'][i] <= data['exchange_timestamp'][i]:
+                    raise ValueError(
+                        "File {} Local timestamp is greater than exchange timestamp in row {}".format(file_path, i+1))
+            
 
-    
-
-
-
+def cleanup_local_disorder(file_path):
+    """
+    This function is used to clean up the local timestamp that is not in order
+    """
+    pass

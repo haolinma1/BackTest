@@ -36,35 +36,44 @@ class Order:
         else:
             return None
 
+class Ask:
+    def __init__(self):
+        self.order_dict={}
+    
+    def load(self,asks_list):
+        i=0
+        while i< len(asks_list):
+            self.order_dict[asks_list[i]]=asks_list[i+1]
+            i+=2
 
 def main():
-    """
-    asks_list_array=[6.32685e+04 3.00000e-03 6.32688e+04 2.00000e+00 6.32689e+04 3.73200e+00
- 6.32690e+04 3.03200e+00 6.32696e+04 3.05000e+00 6.32635e+04 2.62000e+00
- 6.32685e+04 3.00000e-03 6.32687e+04 6.00000e-01 6.32688e+04 4.05500e+00
- 6.32689e+04 1.00490e+01 6.32634e+04 1.00000e+00 6.32635e+04 2.62000e+00
- 6.32687e+04 2.00000e+00 6.32688e+04 3.98100e+00 6.32689e+04 9.86000e+00]
-    """    
-    lines = [
-    "1714246667143 [{'asks': [['63268.5', '0.003'], ['63268.8', '2.000'], ['63268.9', '3.732'], ['63269.0', '3.032'], ['63269.6', '3.050']], 'bids': [['63263.4', '7.154'], ['63263.3', '3.019'], ['63262.5', '0.553'], ['63262.4', '3.037'], ['63261.9', '3.021']], 'checksum': 0, 'ts': '1714246666077'}]",
-"1714246667180 [{'asks': [['63263.5', '2.620'], ['63268.5', '0.003'], ['63268.7', '0.600'], ['63268.8', '4.055'], ['63268.9', '10.049']], 'bids': [['63263.3', '3.052'], ['63262.5', '0.553'], ['63262.4', '3.043'], ['63261.9', '3.038'], ['63261.6', '3.059']], 'checksum': 0, 'ts': '1714246666101'}]",
-"1714246667259 [{'asks': [['63263.4', '1.000'], ['63263.5', '2.620'], ['63268.7', '2.000'], ['63268.8', '3.981'], ['63268.9', '9.860']], 'bids': [['63263.3', '3.051'], ['63262.5', '0.553'], ['63262.4', '3.012'], ['63261.9', '3.041'], ['63261.6', '3.014']], 'checksum': 0, 'ts': '1714246666193'}]"
-    ]
+    file_path = 'C:/Users/haolin/Desktop/backtest/data/example/BTCUSDT_20240427_books5.npz'
+    data=np.load(file_path)
+    # while i< len(test_list):
+    #     asks_dict[test_list[i]]=test_list[i+1]
+    #     i+=2 
+        
+    # print(asks_dict)
+    # print(data['asks_list_array'])
+    orderbook_depth=int(file_path.split('.')[-2][-1])
+    snapshot=[]
+    num_rows=len(data['local_timestamp'])
 
-    test1 = Test()
-    test2 = Test()
-    order=Order()
-    order.append(test1,1)
-    order.append(test2,2)
+
+    i=0
+    while i<len(data['asks_list_array']):
+        asks_list=data['asks_list_array'][i:i+orderbook_depth*2]
+        ask=Ask()
+        ask.load(asks_list)
+        snapshot.append(ask)
+        print(i/10)        
+        i+=orderbook_depth*2
     
-    # orderlist=order.getOrderList()[1][0]
-    orderlist=order.__getitem__(0)[0].side
-    print(orderlist)
+
+
     
         
-    # data1 = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
-    # data2 = np.array([[10, 11, 12], [13, 14, 15], [16, 17, 18]])
-    # np.savez('output.npz', asks_list_array=asks_list_array, bids_list_array=bids_list_array, timestamp_array=timestamp_array)
+    
 
 if __name__ == '__main__':
     main()
