@@ -11,7 +11,7 @@ queue = Queue()
 dotenv.load_dotenv()
 # data_path is the path to store the data
 data_path = os.getenv("DATA_PATH")
-
+output_path = os.getenv("OUTPUT_PATH")
 instType, instId, channel= sys.argv[1].split(',')
 
 stream = Data(queue=queue, instType=instType, instId=instId, channel=channel)
@@ -41,7 +41,7 @@ def shutdown():
 
 async def main():
     logging.basicConfig(level=logging.DEBUG)
-    writer_p = Process(target=writer_proc, args=(queue, data_path,))
+    writer_p = Process(target=writer_proc, args=(queue, output_path,))
     writer_p.start()
     try:
         while not stream.closed:

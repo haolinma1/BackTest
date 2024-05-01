@@ -17,14 +17,15 @@ def validate(data_path):
             data = np.load(file_path)
             # check if the local timestamp is in order
             prev_local_timestamp = None
-            for local_timestamp in data['local_timestamp']:
+            for index in len(data['local_timestamp']):
                 if prev_local_timestamp is None:
-                    prev_local_timestamp = local_timestamp
+                    prev_local_timestamp = data['local_timestamp'](index)
                     continue
-                elif local_timestamp <= prev_local_timestamp:
+                elif data['local_timestamp'](index) <= prev_local_timestamp:
+                    # fix the local timestamp.
                     raise ValueError(
-                        "File {} Local timestamp not in order".format(file_path))
-                prev_local_timestamp = local_timestamp
+                        "File {} Local timestamp not in order, in line".format(file_path))
+                prev_local_timestamp = data['local_timestamp'](index)
             # check if the exchange timestamp is in order
             prev_exchange_timestamp = None
             for exchange_timestamp in data['exchange_timestamp']:

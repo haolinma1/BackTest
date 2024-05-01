@@ -6,14 +6,14 @@ from cleanup import validate
 dotenv.load_dotenv()
 
 # data_path is the folder path to store the data
-data_path = os.getenv("DATA_PATH")
+data_path = 'D:\hft-data\quite_market'
 
 
 
 
 
 def main():
-    # convert(data_path)
+    convert(data_path)
     validate(data_path)
     
     
