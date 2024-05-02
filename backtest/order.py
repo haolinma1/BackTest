@@ -28,7 +28,6 @@ class Order:
     order_id: int64
     qty:float64
     side: int8
-    local_timestamp:int64
     exchange_timestamp:int64
     tick_price:float64
     tick_size:float64
@@ -42,7 +41,6 @@ class Order:
         self.order_id = order_id
         self.qty = qty
         self.side = side
-        self.local_timestamp = 0
         self.exchange_timestamp = 0
         self.tick_price = tick_price
         self.tick_size = tick_size

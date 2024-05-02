@@ -30,10 +30,9 @@ class Data:
         self.instId = instId
 
     async def __on_message(self, raw_message):
-        timestamp = time.time()
         message = json.loads(raw_message)
         if len(message)==4:
-            self.queue.put((self.instId, timestamp, message['data']))
+            self.queue.put((self.instId, message['data']))
 
     async def __keep_alive(self):
         while not self.closed:

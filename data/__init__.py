@@ -4,6 +4,7 @@ import sys
 import asyncio
 import signal
 import logging
+from datetime import datetime
 import os
 from fetchdata import Data
 import dotenv
@@ -22,12 +23,11 @@ def writer_proc(queue, output):
         data = queue.get()
         if data is None:
             break
-        symbol, timestamp, message = data
-        date = datetime.datetime.fromtimestamp(timestamp).strftime('%Y%m%d')
+        symbol, message = data
+        current_date = datetime.now().date()
         try:
-            with open(os.path.join(output, '%s_%s_%s.dat' % (symbol, date,channel)), 'a') as f:
+            with open(os.path.join(output, '%s_%s_%s.dat' % (symbol, current_date,channel)), 'a') as f:
                 message = str(message)
-                f.write(str(int(timestamp*1000)))
                 f.write(' ')
                 f.write(message)
                 f.write('\n')
@@ -41,7 +41,7 @@ def shutdown():
 
 async def main():
     logging.basicConfig(level=logging.DEBUG)
-    writer_p = Process(target=writer_proc, args=(queue, output_path,))
+    writer_p = Process(target=writer_proc, args=(queue, data_path,))
     writer_p.start()
     try:
         while not stream.closed:

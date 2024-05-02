@@ -10,9 +10,7 @@ import re
 
 
 class SnapShot():
-
-    def __init__(self, local_timestamp, exchange_timestamp):
-        self.local_timestamp = local_timestamp
+    def __init__(self, exchange_timestamp):
         self.asks_dict = {}
         self.bids_dict = {}
         self.exchange_timestamp = exchange_timestamp
@@ -36,7 +34,7 @@ class SnapShot():
             i += 2
 
     def print_snapshot(self):
-        print("local_timestamp: ", self.local_timestamp)
+
         print("exchange_timestamp:", self.exchange_timestamp)
         print("asks_dict:", self.asks_dict)
         print("bids_dict:", self.bids_dict)
@@ -55,16 +53,16 @@ class Cache():
     def load(self, data_,orderbook_depth):
         """
         load the data from the npz file, we got four arrays,
-        asks_list_array, bids_list_array, local_timestamp, exchange_timestamp
+        asks_list_array, bids_list_array, exchange_timestamp
         
         Args:
             file_path (string): the path to the npz file
         """
-        local_timestamp = data_['local_timestamp']
+
         exchange_timestamp = data_['exchange_timestamp']
-        num_rows = len(local_timestamp)
+        num_rows = len(exchange_timestamp)
         for i in range(num_rows):
-            snapshot = SnapShot(local_timestamp[i], exchange_timestamp[i])
+            snapshot = SnapShot( exchange_timestamp[i])
             self.data.append(snapshot)
 
         i = 0
@@ -123,15 +121,15 @@ class OrderBook():
             orderbook_depth = int(file.split('.')[-2][-1])
             # to ensure the memory is good enough for the order book depth
             # we will pass 1000 lines as a time for the book to run, after that clear the cache and then go to the next 1000 lines.
-            num_rows = len(data['local_timestamp'])
+            num_rows = len(data['exchange_timestamp'])
             i=0
             while i<num_rows:
                 if i+1000<num_rows:
-                    pass_data = {'local_timestamp': data['local_timestamp'][i:i+1000], 'exchange_timestamp': data['exchange_timestamp'][i:i+1000],
+                    pass_data = { 'exchange_timestamp': data['exchange_timestamp'][i:i+1000],
                                  'asks_list_array': data['asks_list_array'][i:i+1000], 'bids_list_array': data['bids_list_array'][i:i+1000]}
                     i+=1000
                 else:
-                    pass_data = {'local_timestamp': data['local_timestamp'][i:], 'exchange_timestamp': data['exchange_timestamp'][i:],
+                    pass_data = {'exchange_timestamp': data['exchange_timestamp'][i:],
                                  'asks_list_array': data['asks_list_array'][i:], 'bids_list_array': data['bids_list_array'][i:]}
                     i=num_rows
                 
