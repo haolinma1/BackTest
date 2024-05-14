@@ -3,20 +3,13 @@ import os
 import numpy as np
 from numba import jit
 
+
 def validate(file_path):
     """
     This function is used to open the file and return the data
     """
 
-    for file_name in os.listdir(file_path):
-        if file_name.endswith('.npz'):
-            file_path = os.path.join(file_path, file_name)
-            data = np.load(file_path)
-            exchange_timestamp = data['exchange_timestamp']
-            index=validate_(exchange_timestamp)
-            # get_snapshot(index,data)
-            if index is not None:
-                raise ValueError("File {} is not correct,line {}".format(file_name,index))
+    
 
 
 

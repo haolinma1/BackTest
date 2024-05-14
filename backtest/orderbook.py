@@ -2,17 +2,19 @@ from numba import float64, int64
 import numba
 from numba.experimental import jitclass
 from numba.types import DictType, unicode_type, ListType
-from numba.typed import Dict, List
+from numba.typed import Dict, List,Tuple
 import numpy as np
 import os
 import re
 
 
-
+@jitclass
 class SnapShot():
-    def __init__(self, exchange_timestamp):
-        self.asks_dict = {}
-        self.bids_dict = {}
+    asks_dict: DictType(float64, float64)
+    bids_dict: DictType(float64, float64)
+    def __init__(self, exchange_timestamp:np.array):
+        self.asks_dict = Dict.empty(float64, float64)   
+        self.bids_dict = Dict.empty(float64, float64)
         self.exchange_timestamp = exchange_timestamp
 
     def load_asks(self, asks):
@@ -44,11 +46,12 @@ class SnapShot():
 
 
 
-
-
+snapshot_py=SnapShot.class_type.instance_type
+@jitclass
 class Cache():
+    data: ListType(snapshot_py)
     def __init__(self):
-        self.data = []
+        self.data = List.empty_list(snapshot_py)
 
     def load(self, data_,orderbook_depth):
         """
@@ -77,20 +80,12 @@ class Cache():
         del self.data[:]
 
 
-def extract_date_time(file_list):
-    # Assuming date time format is YYYYMMDD
-    match = re.search(r'(\d{8})', file_list)
-    if match:
-        return match.group(1)
-    else:
-        return None
-
 
 class OrderBook():
     """
     run the order book simulation
     """
-
+    cache: Cache
     def __init__(self):
         self.cache = Cache()
 
@@ -102,7 +97,7 @@ class OrderBook():
             for snapshot in self.cache.data:
                 snapshot.print_snapshot()
     
-    def get_order_book(self,data_path):
+    def load_order_book(self,data_path):
         """
         this function will get the run function from the init
 
