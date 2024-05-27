@@ -6,7 +6,7 @@ from cleanup import validate, fix_local_disorder
 dotenv.load_dotenv()
 
 # data_path is the folder path to store the data
-data_path = 'C:/Users/haolin/Desktop/backtest/data/example'
+data_path = 'D:/hft-data/raw_data'
 # file_path = os.getenv("DATA_PATH")
 
 file="D:/hft-data/process-data/BTCUSDT_20240502_books5.npz"
